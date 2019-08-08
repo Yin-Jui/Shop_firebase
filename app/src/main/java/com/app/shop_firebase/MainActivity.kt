@@ -1,14 +1,14 @@
 package com.app.shop_firebase
 
-import android.app.Activity
+
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.View.GONE
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.view.ActionMode
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
@@ -25,19 +25,17 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
 
         verify_email.setOnClickListener {
             FirebaseAuth.getInstance().currentUser?.sendEmailVerification()
-                ?.addOnCompleteListener { task ->
+                ?.addOnCompleteListener { task ->                                       //not sure if the email is created successfully
                     if (task.isSuccessful) {
                         Snackbar.make(it, "verify email sent", Snackbar.LENGTH_LONG).show()
 
                     }
-                }                                                                    //not sure to be created successfully
+                }
         }
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
-
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -74,14 +72,15 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
         FirebaseAuth.getInstance().removeAuthStateListener(this)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onAuthStateChanged(auth: FirebaseAuth) {
         val user = FirebaseAuth.getInstance().currentUser
         if (user != null) {
-            user_info.setText("Email: ${user.email} / ${user.isEmailVerified}")
-            verify_email.visibility = if (user.isEmailVerified) View.GONE else View.VISIBLE
+            user_info.text = "Email: ${user.email} / ${user.isEmailVerified}"
+            verify_email.visibility = if (user.isEmailVerified) GONE else View.VISIBLE
         } else {
-            user_info.setText("Not Login")
-            verify_email.visibility = View.GONE
+            user_info.text = "Not Login"
+            verify_email.visibility = GONE
         }
     }
 }

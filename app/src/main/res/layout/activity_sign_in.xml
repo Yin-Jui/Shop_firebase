@@ -5,7 +5,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".SignIn" android:id="@+id/emailll">
+        tools:context=".SignIn" android:id="@+id/emaill">
 
     <TextView
             android:text="Email"
@@ -49,4 +49,13 @@
             android:id="@+id/email" android:layout_marginStart="50dp"
             app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/textView"
             android:layout_marginTop="10dp"/>
+    <androidx.constraintlayout.widget.Guideline android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                                android:id="@+id/guideline"
+                                                android:orientation="horizontal"
+                                                app:layout_constraintGuide_percent="0.5"/>
+    <view android:layout_width="wrap_content" android:layout_height="wrap_content"
+          class="com.google.android.gms.common.SignInButton"
+          app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" id="@+id/view"
+          android:layout_marginTop="8dp" app:layout_constraintTop_toTopOf="@+id/guideline"
+          android:id="@+id/google_sign_in"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
