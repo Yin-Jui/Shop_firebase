@@ -1,6 +1,5 @@
 package com.app.shop_firebase
 
-
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
@@ -9,10 +8,12 @@ import android.view.MenuItem
 import android.view.View
 import android.view.View.GONE
 import androidx.appcompat.app.AppCompatActivity
+import com.firebase.ui.auth.AuthUI
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import java.util.*
 
 class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
 
@@ -25,7 +26,8 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
 
         verify_email.setOnClickListener {
             FirebaseAuth.getInstance().currentUser?.sendEmailVerification()
-                ?.addOnCompleteListener { task ->                                       //not sure if the email is created successfully
+                ?.addOnCompleteListener { task ->
+                    //not sure if the email is created successfully
                     if (task.isSuccessful) {
                         Snackbar.make(it, "verify email sent", Snackbar.LENGTH_LONG).show()
 
@@ -51,7 +53,22 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
         return when (item.itemId) {
             R.id.action_settings -> true
             R.id.action_signin -> {
-                startActivityForResult(Intent(this, SignIn::class.java), RC_SIGNIN)
+                /*   startActivityForResult(Intent(this, SignIn::class.java), RC_SIGNIN)
+                   */
+
+                startActivityForResult(
+                    AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(
+                            Arrays.asList(
+                                AuthUI.IdpConfig.EmailBuilder().build(),
+                                AuthUI.IdpConfig.GoogleBuilder().build(),
+                                AuthUI.IdpConfig.FacebookBuilder().build()
+                            )
+                        )
+                        .setIsSmartLockEnabled(false)
+                        .build(), RC_SIGNIN
+                )
                 true
             }
             R.id.action_signout -> {
