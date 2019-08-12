@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
             R.id.action_signin -> {
                 /*   startActivityForResult(Intent(this, SignIn::class.java), RC_SIGNIN)
                    */
-
+                val whiteList = listOf<String>("tw", "hk", "cn", "au")
                 startActivityForResult(
                     AuthUI.getInstance()
                         .createSignInIntentBuilder()
@@ -63,10 +63,16 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
                             Arrays.asList(
                                 AuthUI.IdpConfig.EmailBuilder().build(),
                                 AuthUI.IdpConfig.GoogleBuilder().build(),
-                                AuthUI.IdpConfig.FacebookBuilder().build()
+                                AuthUI.IdpConfig.FacebookBuilder().build(),
+                                AuthUI.IdpConfig.PhoneBuilder()
+                                    .setWhitelistedCountries(whiteList)
+                                    .setDefaultCountryIso("tw")
+                                    .build()
                             )
                         )
                         .setIsSmartLockEnabled(false)
+                        .setTheme(R.style.SignUp)
+                        .setLogo(R.drawable.iconfinder_cool_emoticon_emoticons_emoji_emote_2993651)
                         .build(), RC_SIGNIN
                 )
                 true
