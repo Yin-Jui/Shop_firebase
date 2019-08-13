@@ -3,6 +3,7 @@ package com.app.shop_firebase
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.view.View.GONE
 import androidx.appcompat.app.AppCompatActivity
@@ -58,15 +59,23 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
                 return itemHolder(view)
             }
 
-            override fun onBindViewHolder(holder: itemHolder, p1: Int, item: Item) {
+            override fun onBindViewHolder(holder: itemHolder, position: Int, item: Item) {
+                item.id = snapshots.getSnapshot(position).id
                 holder.bindTo(item)
+                holder.itemView.setOnClickListener {
+                    itemClick(item, position)
+                }
             }
-
         }
-
         recycler.adapter = adapter
 
+    }
 
+    private fun itemClick(item: Item, position: Int) {
+        Log.d("Main", "itemclicked:  ${item.title}   position: ${position}")
+        val intent = Intent(this, DetailActivity::class.java)
+        intent.putExtra("ITEM",item)
+        startActivity(intent)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -130,8 +139,10 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
     override fun onAuthStateChanged(auth: FirebaseAuth) {
         val user = FirebaseAuth.getInstance().currentUser
         if (user != null) {
-            user_info.text = "Email: ${user.email} / ${user.isEmailVerified}"
-    //        verify_email.visibility = if (user.isEmailVerified) GONE else View.VISIBLE
+            user_info.setText("Email: ${user.email} / ${user.isEmailVerified}")
+            user_info.visibility = GONE
+
+            //        verify_email.visibility = if (user.isEmailVerified) GONE else View.VISIBLE
         } else {
             user_info.text = "Not Login"
             verify_email.visibility = GONE
