@@ -15,6 +15,6 @@ class DetailActivity : AppCompatActivity() {
         Log.d("Detail","Oncreate  ${item.id}    ${item.title}")
 
         web.settings.javaScriptEnabled = true
-        web.loadUrl("https://www.ptt.cc/bbs/studyabroad/index1493.html")
+        web.loadUrl(item.content)
     }
 }
