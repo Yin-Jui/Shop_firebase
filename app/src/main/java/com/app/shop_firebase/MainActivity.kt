@@ -14,6 +14,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import java.util.*
@@ -47,6 +48,7 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
         recycler.layoutManager = LinearLayoutManager(this)
         val query = FirebaseFirestore.getInstance()
             .collection("items2")
+            .orderBy("viewCount", Query.Direction.DESCENDING)
             .limit(10)
 
         val options = FirestoreRecyclerOptions.Builder<Item>()  //選項設計

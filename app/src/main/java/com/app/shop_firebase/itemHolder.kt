@@ -12,6 +12,7 @@ class itemHolder(view: View) : RecyclerView.ViewHolder(view) {
     var titleText = view.item_title
     var priceText = view.item_price
     var image = view.item_image
+    var countText = view.itemCount
 
     fun bindTo(item: Item) {
         titleText.setText(item.title)
@@ -20,5 +21,7 @@ class itemHolder(view: View) : RecyclerView.ViewHolder(view) {
             .load(item.imageURL)
             .apply(RequestOptions().override(120))
             .into(image)
+        countText.setText(item.viewCount.toString())
+        countText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.eyee,0,0,0)
     }
 }
