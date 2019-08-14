@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.view.View.GONE
+import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.firebase.ui.auth.AuthUI
@@ -24,6 +25,8 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
 
     private val RC_SIGNIN = 100
     private lateinit var adapter: FirestoreRecyclerAdapter<Item, itemHolder>
+    var categories = mutableListOf<Category>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -39,6 +42,26 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
                     }
                 }
         }
+        FirebaseFirestore.getInstance().collection("category")
+            .get().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    task.result?.let {
+                        for (doc in it) {
+                            categories.add((Category(doc.id, doc.data.get("name").toString())))
+                        }
+                        var adapter = ArrayAdapter<Category>(
+                            this@MainActivity,
+                            android.R.layout.simple_spinner_item,
+                            categories
+                        )
+                        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
+                        spinner.adapter = adapter
+                    }
+                }
+            }
+
+
+
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
@@ -76,7 +99,7 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
     private fun itemClick(item: Item, position: Int) {
         Log.d("Main", "itemclicked:  ${item.title}   position: ${position}")
         val intent = Intent(this, DetailActivity::class.java)
-        intent.putExtra("ITEM",item)
+        intent.putExtra("ITEM", item)
         startActivity(intent)
     }
 
