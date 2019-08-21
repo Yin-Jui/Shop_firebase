@@ -27,8 +27,7 @@ class DetailActivity : AppCompatActivity() {
         item.id?.let {
             FirebaseFirestore.getInstance().collection("items2")
                 .document(it).update("viewCount", item.viewCount)
-                //document(it).set(item)的話可以重新設定整個物件
+            //.document(it).set(item)//的話可以重新設定整個物件根據我們定義的Item
         }
-
     }
 }

@@ -67,9 +67,9 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
                             }
                         spinner.setSelection(0, false)
                         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
                                 //  setupAdapter()
-
+                                itemViewModel.setCategory(categories.get(position).id)
                             }
 
                             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -94,10 +94,19 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
         recycler.adapter = adapter
         itemViewModel = ViewModelProviders.of(this)    //使用之前要先implement(build.gradle)
             .get(ItemViewModel::class.java)
-        itemViewModel.getItems().observe(this,androidx.lifecycle.Observer {   //觀察裡面值的變化,要不要通知取決於mainactivity的生命週期
+        itemViewModel.getItems().observe(this, androidx.lifecycle.Observer {
+            //觀察裡面值的變化,要不要通知取決於mainactivity的生命週期
 
-            Log.d("Jimmy","observe:  ${it.size}")
-            adapter.items = it
+            Log.d("Jimmy", "observe:  ${it.size()}")
+
+            val list = mutableListOf<Item>()
+            for (doc in it.documents) {
+                val item = doc.toObject(Item::class.java) ?: Item()
+                item.id = doc.id
+                list.add(item)
+
+            }
+            adapter.items = list
             adapter.notifyDataSetChanged()
         })
         //  setupAdapter()
