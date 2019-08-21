@@ -66,17 +66,23 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
                                 setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
                             }
                         spinner.setSelection(0, false)
-                        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-                                //  setupAdapter()
-                                itemViewModel.setCategory(categories.get(position).id)
+                        spinner.onItemSelectedListener =
+                            object : AdapterView.OnItemSelectedListener {
+                                override fun onItemSelected(
+                                    p0: AdapterView<*>?,
+                                    p1: View?,
+                                    position: Int,
+                                    p3: Long
+                                ) {
+                                    //  setupAdapter()
+                                    itemViewModel.setCategory(categories.get(position).id)
+                                }
+
+                                override fun onNothingSelected(p0: AdapterView<*>?) {
+
+                                }
+
                             }
-
-                            override fun onNothingSelected(p0: AdapterView<*>?) {
-
-                            }
-
-                        }
                         /*   adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line)
                            spinner.adapter = adapter  */
                     }
@@ -108,6 +114,13 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
             }
             adapter.items = list
             adapter.notifyDataSetChanged()
+            list.forEach {
+                ItemDatabase.getDatabase(this)?.getItemDao()?.addItem(it)
+            }
+            ItemDatabase.getDatabase(this)?.getItemDao()?.getItems()?.forEach {
+                Log.d("DATA", "Room:  ${it.id}  ${it.title}")
+            }
+
         })
         //  setupAdapter()
     }
