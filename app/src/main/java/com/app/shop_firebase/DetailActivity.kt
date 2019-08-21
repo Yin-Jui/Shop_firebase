@@ -15,7 +15,7 @@ class DetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_detail)
 
         item = intent.getParcelableExtra<Item>("ITEM")
-        Log.d("Detail","Oncreate  ${item.id}    ${item.title}")
+        Log.d("Detail", "Oncreate  ${item.id}    ${item.title}")
 
         web.settings.javaScriptEnabled = true
         web.loadUrl(item.content)
@@ -26,7 +26,8 @@ class DetailActivity : AppCompatActivity() {
         item.viewCount++
         item.id?.let {
             FirebaseFirestore.getInstance().collection("items2")
-                .document(it).set(item)
+                .document(it).update("viewCount", item.viewCount)
+                //document(it).set(item)的話可以重新設定整個物件
         }
 
     }
