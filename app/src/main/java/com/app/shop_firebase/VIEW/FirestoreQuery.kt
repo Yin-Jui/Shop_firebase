@@ -1,15 +1,22 @@
-package com.app.shop_firebase
+package com.app.shop_firebase.VIEW
 
 import androidx.lifecycle.LiveData
+import com.app.shop_firebase.MODULE.Item
 import com.google.firebase.firestore.*
 
-class FirestoreQuery : LiveData<QuerySnapshot>(), EventListener<QuerySnapshot> {
+class FirestoreQuery : LiveData<List<Item>>(), EventListener<QuerySnapshot> {
 
     lateinit var registration: ListenerRegistration
 
     override fun onEvent(querySnapshot: QuerySnapshot?, exception: FirebaseFirestoreException?) {
         if (querySnapshot != null && !querySnapshot.isEmpty) {
-            value = querySnapshot
+            val list = mutableListOf<Item>()
+            for (doc in querySnapshot.documents) {
+                val item = doc.toObject(Item::class.java) ?: Item()
+                item.id = doc.id
+                list.add(item)
+            }
+            value = list
         }
     }
 
@@ -31,18 +38,18 @@ class FirestoreQuery : LiveData<QuerySnapshot>(), EventListener<QuerySnapshot> {
         isRegistrated = true
     }
 
-    fun setCategory(categoryId:String){
-        if(isRegistrated){
+    fun setCategory(categoryId: String) {
+        if (isRegistrated) {
             registration.remove()
             isRegistrated = false
         }
-        if(categoryId.length>0){
+        if (categoryId.length > 0) {
             query = FirebaseFirestore.getInstance()
                 .collection("items2")
-                .whereEqualTo("category",categoryId)
+                .whereEqualTo("category", categoryId)
                 .orderBy("viewCount", Query.Direction.DESCENDING)
                 .limit(10)
-        }else{
+        } else {
             query = FirebaseFirestore.getInstance()
                 .collection("items2")
                 .orderBy("viewCount", Query.Direction.DESCENDING)

@@ -3,6 +3,7 @@ package com.app.shop_firebase
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import com.app.shop_firebase.MODULE.Item
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_detail.*
 

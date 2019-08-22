@@ -1,7 +1,9 @@
-package com.app.shop_firebase
+package com.app.shop_firebase.VIEW
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.app.shop_firebase.MODULE.Item
+import com.app.shop_firebase.R
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.item_row.view.*

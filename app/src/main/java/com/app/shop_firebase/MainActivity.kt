@@ -1,7 +1,10 @@
 package com.app.shop_firebase
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -9,21 +12,26 @@ import android.view.View.GONE
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.app.shop_firebase.DATA.ItemRepository
+import com.app.shop_firebase.MODULE.Category
+import com.app.shop_firebase.MODULE.Item
+import com.app.shop_firebase.VIEW.ItemViewModel
+import com.app.shop_firebase.VIEW.itemHolder
 import com.firebase.ui.auth.AuthUI
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
+import kotlin.concurrent.schedule
 import java.util.*
 
+@Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
 
 
@@ -55,7 +63,12 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
                         //不是null的時候才處理
                         categories.add(Category("", "All"))
                         for (doc in it) {
-                            categories.add((Category(doc.id, doc.data.get("name").toString())))
+                            categories.add(
+                                (Category(
+                                    doc.id,
+                                    doc.data.get("name").toString()
+                                ))
+                            )
                         }
                         spinner.adapter = ArrayAdapter<Category>(
                             this@MainActivity,
@@ -93,6 +106,7 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show()
         }
+
         //setUpRecyclerView
         recycler.setHasFixedSize(true)
         recycler.layoutManager = LinearLayoutManager(this)
@@ -103,24 +117,16 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
         itemViewModel.getItems().observe(this, androidx.lifecycle.Observer {
             //觀察裡面值的變化,要不要通知取決於mainactivity的生命週期
 
-            Log.d("Jimmy", "observe:  ${it.size()}")
-
-            val list = mutableListOf<Item>()
-            for (doc in it.documents) {
-                val item = doc.toObject(Item::class.java) ?: Item()
-                item.id = doc.id
-                list.add(item)
-
-            }
-            adapter.items = list
+            Log.d("Jimmy", "observe:  ${it.size}")
+            adapter.items = it
             adapter.notifyDataSetChanged()
-            list.forEach {
-                ItemDatabase.getDatabase(this)?.getItemDao()?.addItem(it)
-            }
-            ItemDatabase.getDatabase(this)?.getItemDao()?.getItems()?.forEach {
-                Log.d("DATA", "Room:  ${it.id}  ${it.title}")
-            }
-
+            /*   list.forEach {      //資料庫room
+                   ItemDatabase.getDatabase(this)?.getItemDao()?.addItem(it)
+               }
+               ItemDatabase.getDatabase(this)?.getItemDao()?.getItems()?.forEach {
+                   Log.d("DATA", "Room:  ${it.id}  ${it.title}")
+               }
+   */
         })
         //  setupAdapter()
     }
@@ -220,48 +226,68 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
         super.onStart()
         FirebaseAuth.getInstance().addAuthStateListener(this)
         // adapter.startListening()
-    }
+        //network signal
+        val itemrepository = ItemRepository(application)
 
-    override fun onStop() {
-        super.onStop()
-        FirebaseAuth.getInstance().removeAuthStateListener(this)
-        //   adapter.stopListening()
-    }
+        Timer("Checking connection", false).schedule(10, 3000) {
 
-    @SuppressLint("SetTextI18n")
-    override fun onAuthStateChanged(auth: FirebaseAuth) {
-        val user = FirebaseAuth.getInstance().currentUser
-        if (user != null) {
-            user_info.setText("Email: ${user.email} / ${user.isEmailVerified}")
-            user_info.visibility = GONE
-
-            //        verify_email.visibility = if (user.isEmailVerified) GONE else View.VISIBLE
-        } else {
-            user_info.text = "Not Login"
-            verify_email.visibility = GONE
+            doAsync {
+                var connection: Boolean
+                val cm =
+                    application.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
+                connection = activeNetwork?.isConnectedOrConnecting == true
+                uiThread {
+                    if (connection) {
+                        signal.setImageResource(R.drawable.lightbulbgreen)
+                    } else {
+                        signal.setImageResource(R.drawable.lightbulbred)
+                    }
+                }
+            }
         }
     }
 
-    inner class ItemAdapter(var items: List<Item>) : RecyclerView.Adapter<itemHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): itemHolder {
-            return itemHolder(
-                LayoutInflater.from(parent.context)
-                    .inflate(R.layout.item_row, parent, false)
-            )
+        override fun onStop() {
+            super.onStop()
+            FirebaseAuth.getInstance().removeAuthStateListener(this)
+            //   adapter.stopListening()
         }
 
-        override fun getItemCount(): Int {
-            return items.size
-        }
+        @SuppressLint("SetTextI18n")
+        override fun onAuthStateChanged(auth: FirebaseAuth) {
+            val user = FirebaseAuth.getInstance().currentUser
+            if (user != null) {
+                user_info.setText("Email: ${user.email} / ${user.isEmailVerified}")
+                user_info.visibility = GONE
 
-        override fun onBindViewHolder(holder: itemHolder, position: Int) {
-
-            holder.bindTo(items.get(position))
-            holder.itemView.setOnClickListener {
-                itemClick(items.get(position), position)
+                //        verify_email.visibility = if (user.isEmailVerified) GONE else View.VISIBLE
+            } else {
+                user_info.text = "Not Login"
+                verify_email.visibility = GONE
             }
         }
 
+        inner class ItemAdapter(var items: List<Item>) : RecyclerView.Adapter<itemHolder>() {
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): itemHolder {
+                return itemHolder(
+                    LayoutInflater.from(parent.context)
+                        .inflate(R.layout.item_row, parent, false)
+                )
+            }
+
+            override fun getItemCount(): Int {
+                return items.size
+            }
+
+            override fun onBindViewHolder(holder: itemHolder, position: Int) {
+
+                holder.bindTo(items.get(position))
+                holder.itemView.setOnClickListener {
+                    itemClick(items.get(position), position)
+                }
+            }
+
+        }
     }
-}
 
