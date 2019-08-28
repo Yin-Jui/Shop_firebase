@@ -46,6 +46,7 @@
                 <data android:scheme="@string/facebook_login_protocol_scheme"/>
             </intent-filter>
         </activity>
+        <service android:name=".service.MyFirebaseMessageingService"/>
     </application>
 
 </manifest>

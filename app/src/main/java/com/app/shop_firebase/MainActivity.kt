@@ -24,6 +24,7 @@ import com.firebase.ui.auth.AuthUI
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.iid.FirebaseInstanceId
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import org.jetbrains.anko.doAsync
@@ -260,6 +261,15 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
             if (user != null) {
                 user_info.setText("Email: ${user.email} / ${user.isEmailVerified}")
                 user_info.visibility = GONE
+                FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {task->
+                    if(task.isSuccessful){
+                        Log.d("jimmy"," FCM TOKEN ${task.result?.token}")
+                        FirebaseFirestore.getInstance()
+                            .collection("users")
+                            .document(user.uid)
+                            .set(mapOf("token" to task.result?.token))
+                    }
+                }
 
                 //        verify_email.visibility = if (user.isEmailVerified) GONE else View.VISIBLE
             } else {
