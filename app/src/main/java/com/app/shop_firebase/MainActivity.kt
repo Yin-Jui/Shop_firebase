@@ -36,7 +36,7 @@ import java.util.*
 class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
 
 
-    private val RC_SIGNIN = 100
+    private val RC_SIGNIN = 10000
     // private lateinit var adapter: FirestoreRecyclerAdapter<Item, itemHolder>
     var categories = mutableListOf<Category>()
     lateinit var adapter: ItemAdapter
