@@ -57,6 +57,9 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
                     }
                 }
         }
+
+        //Classify
+
         FirebaseFirestore.getInstance().collection("categories")
             .get().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -109,11 +112,11 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
         }
 
         //setUpRecyclerView
-        recycler.setHasFixedSize(true)
+        recycler.setHasFixedSize(true)  // recycler is the id of the recycler view in MainActivity
         recycler.layoutManager = LinearLayoutManager(this)
         adapter = ItemAdapter((mutableListOf<Item>()))
         recycler.adapter = adapter
-        itemViewModel = ViewModelProviders.of(this)    //使用之前要先implement(build.gradle)
+        itemViewModel = ViewModelProviders.of(this)    //使用之前要先implement(build.gradle), 利用viewmodel簡化程式碼
             .get(ItemViewModel::class.java)
         itemViewModel.getItems().observe(this, androidx.lifecycle.Observer {
             //觀察裡面值的變化,要不要通知取決於mainactivity的生命週期
@@ -121,56 +124,10 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
             Log.d("Jimmy", "observe:  ${it.size}")
             adapter.items = it
             adapter.notifyDataSetChanged()
-            /*   list.forEach {      //資料庫room
-                   ItemDatabase.getDatabase(this)?.getItemDao()?.addItem(it)
-               }
-               ItemDatabase.getDatabase(this)?.getItemDao()?.getItems()?.forEach {
-                   Log.d("DATA", "Room:  ${it.id}  ${it.title}")
-               }
-   */
+
         })
-        //  setupAdapter()
     }
 
-    /*
-        private fun setupAdapter() {
-            var selected = spinner.selectedItemPosition
-            var query: Query = if (selected > 0) {
-                adapter.stopListening()
-                FirebaseFirestore.getInstance()
-                    .collection("items2")
-                    .whereEqualTo("category", categories.get(selected).id)   //篩選
-                    .orderBy("viewCount", Query.Direction.DESCENDING)
-                    .limit(10)
-            } else {
-                FirebaseFirestore.getInstance()
-                    .collection("items2")
-                    .orderBy("viewCount", Query.Direction.DESCENDING)
-                    .limit(10)
-            }
-
-            val options = FirestoreRecyclerOptions.Builder<Item>()  //選項設計
-                .setQuery(query, Item::class.java)
-                .build()
-            adapter = object : FirestoreRecyclerAdapter<Item, itemHolder>(options) {
-                override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): itemHolder {
-                    val view = LayoutInflater.from(parent.context)
-                        .inflate(R.layout.item_row, parent, false)
-                    return itemHolder(view)
-                }
-
-                override fun onBindViewHolder(holder: itemHolder, position: Int, item: Item) {
-                    item.id = snapshots.getSnapshot(position).id
-                    holder.bindTo(item)
-                    holder.itemView.setOnClickListener {
-                        itemClick(item, position)
-                    }
-                }
-            }
-            recycler.adapter = adapter
-            adapter.startListening()
-        }
-    */
     private fun itemClick(item: Item, position: Int) {
         Log.d("Main", "itemclicked:  ${item.title}   position: ${position}")
         val intent = Intent(this, DetailActivity::class.java)
@@ -189,22 +146,21 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.favorite -> true
             R.id.action_signin -> {
                 /*   startActivityForResult(Intent(this, SignIn::class.java), RC_SIGNIN)
                    */
-                val whiteList = listOf<String>("tw", "hk", "cn", "au")
+                val whiteList = listOf<String>("tw", "hk", "cn", "au","us")
                 startActivityForResult(
                     AuthUI.getInstance()
                         .createSignInIntentBuilder()
                         .setAvailableProviders(
                             Arrays.asList(
                                 AuthUI.IdpConfig.EmailBuilder().build(),
-                                AuthUI.IdpConfig.GoogleBuilder().build(),
                                 AuthUI.IdpConfig.FacebookBuilder().build(),
                                 AuthUI.IdpConfig.PhoneBuilder()
                                     .setWhitelistedCountries(whiteList)
-                                    .setDefaultCountryIso("tw")
+                                    .setDefaultCountryIso("us")
                                     .build()
                             )
                         )

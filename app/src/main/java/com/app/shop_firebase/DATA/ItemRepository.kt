@@ -24,7 +24,7 @@ class ItemRepository(application: Application) {
 
         val cm = application.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
-       network = activeNetwork?.isConnectedOrConnecting == true
+        network = activeNetwork?.isConnectedOrConnecting == true
 
     }
 

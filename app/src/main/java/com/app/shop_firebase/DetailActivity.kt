@@ -29,7 +29,7 @@ class DetailActivity : AppCompatActivity() {
             FirebaseFirestore.getInstance().collection("users")
                 .document(uid!!)
                 .collection("watchItems")
-                .document(item.id).get()
+                .document(item.id).get()         //看現在點進去的商品 有沒有在收藏清單內
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val watchItem = task.result?.toObject(WatchItem::class.java)
@@ -65,7 +65,7 @@ class DetailActivity : AppCompatActivity() {
         super.onStart()
         item.viewCount++
         item.id?.let {
-            FirebaseFirestore.getInstance().collection("items2")
+            FirebaseFirestore.getInstance().collection("items")
                 .document(it).update("viewCount", item.viewCount)
             //.document(it).set(item)//的話可以重新設定整個物件根據我們定義的Item
         }

@@ -8,7 +8,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.item_row.view.*
 
-class itemHolder(view: View) : RecyclerView.ViewHolder(view) {
+class itemHolder(view: View) : RecyclerView.ViewHolder(view) {   //For 一列資料
 
 
     var titleText = view.item_title
@@ -24,6 +24,6 @@ class itemHolder(view: View) : RecyclerView.ViewHolder(view) {
             .apply(RequestOptions().override(120))
             .into(image)
         countText.setText(item.viewCount.toString())
-        countText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.eyee,0,0,0)
+        countText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.iconfindereyeeeeee,0,0,0)
     }
 }

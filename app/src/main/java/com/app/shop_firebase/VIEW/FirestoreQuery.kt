@@ -21,7 +21,7 @@ class FirestoreQuery : LiveData<List<Item>>(), EventListener<QuerySnapshot> {
     }
 
     var query = FirebaseFirestore.getInstance()
-        .collection("items2")
+        .collection("items")
         .orderBy("viewCount", Query.Direction.DESCENDING)
         .limit(10)
     var isRegistrated = false
@@ -33,7 +33,7 @@ class FirestoreQuery : LiveData<List<Item>>(), EventListener<QuerySnapshot> {
         }
     }
 
-    override fun onActive() {
+    override fun onActive() {   //資料適合顯示的話
         registration = query.addSnapshotListener(this)
         isRegistrated = true
     }
@@ -45,13 +45,13 @@ class FirestoreQuery : LiveData<List<Item>>(), EventListener<QuerySnapshot> {
         }
         if (categoryId.length > 0) {
             query = FirebaseFirestore.getInstance()
-                .collection("items2")
+                .collection("items")
                 .whereEqualTo("category", categoryId)
                 .orderBy("viewCount", Query.Direction.DESCENDING)
                 .limit(10)
         } else {
             query = FirebaseFirestore.getInstance()
-                .collection("items2")
+                .collection("items")
                 .orderBy("viewCount", Query.Direction.DESCENDING)
                 .limit(10)
         }

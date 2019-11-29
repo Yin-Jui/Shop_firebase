@@ -14,13 +14,13 @@ abstract class ItemDatabase : RoomDatabase() {
     companion object {
         //      var INSTANCE: ItemDatabase? = null
         private lateinit var context: Context
-        private val database: ItemDatabase by lazy {
+        private val database: ItemDatabase by lazy {  //有人要用database才會執行
             Room.databaseBuilder(context, ItemDatabase::class.java, "mydb")
                 .allowMainThreadQueries()
                 .build()
         }
 
-        fun getDatabase(context: Context): ItemDatabase? {
+        fun getDatabase(context: Context): ItemDatabase? {   //傳入呼叫的context
             Companion.context = context
             return database
         }
