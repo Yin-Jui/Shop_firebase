@@ -18,7 +18,9 @@ data class Item(val title: String,
                 @get:Exclude var id:String,    //不寫進firestore
                 var content:String,
                 var viewCount:Int,
-                var category:String) : Parcelable {
-    constructor() : this("", 0,"","","",0,"")
+                var category:String,
+                var idd:String,
+                var favorite:Int) : Parcelable {
+    constructor() : this("", 0,"","","",0,"","",0)
 
 }

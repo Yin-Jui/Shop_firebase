@@ -46,5 +46,10 @@ class ItemRepository(application: Application) {
             items = itemDao.getItemByCategory(categoryId)
         }
     }
+    fun setFavorite() {
+
+        firestoreQuery.setFavorite()
+    }
+
 
 }

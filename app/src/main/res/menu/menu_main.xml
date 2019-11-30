@@ -5,8 +5,7 @@
     <item
             android:id="@+id/favorite"
             android:orderInCategory="100"
-            android:title="Favorite"
-            app:showAsAction="never" />
+            android:title="Favorite" />
     <item android:title="Sign In" android:id="@+id/action_signin"/>
     <item android:title="Sign Out" android:id="@+id/action_signout"/>
 </menu>

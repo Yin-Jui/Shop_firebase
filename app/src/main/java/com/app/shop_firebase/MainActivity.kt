@@ -146,10 +146,10 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.favorite -> true
             R.id.action_signin -> {
                 /*   startActivityForResult(Intent(this, SignIn::class.java), RC_SIGNIN)
                    */
+                Log.d("JIMMM", "here")
                 val whiteList = listOf<String>("tw", "hk", "cn", "au","us")
                 startActivityForResult(
                     AuthUI.getInstance()
@@ -172,8 +172,36 @@ class MainActivity : AppCompatActivity(), FirebaseAuth.AuthStateListener {
                 true
             }
             R.id.action_signout -> {
+
                 FirebaseAuth.getInstance().signOut()
                 true
+            }
+            R.id.favorite -> {
+
+                val list : MutableList<String>  = mutableListOf()
+                val id = FirebaseAuth.getInstance().currentUser?.uid
+
+                FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(id.toString())
+                    .collection("watchItems")
+                    .get()
+                    .addOnSuccessListener { result ->
+                    for (document in result) {
+                        Log.d("JIMMM", "${document.id} => ${document.data}")
+                        val gg = document.id
+                        Log.d("KKK","${gg}")
+                        list.add(gg)
+                    }
+                        Log.d("KKK","${list}")
+                        itemViewModel.setFavorite()
+                }
+                    .addOnFailureListener { exception ->
+                        Log.d("JIMMM", "Error getting documents: ", exception)
+                    }
+
+                true
+
             }
             else -> super.onOptionsItemSelected(item)
         }

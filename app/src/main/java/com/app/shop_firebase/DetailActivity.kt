@@ -49,12 +49,21 @@ class DetailActivity : AppCompatActivity() {
                     .collection("watchItems")
                     .document(item.id)
                     .set(WatchItem(item.id))
+                item.id?.let {
+                    FirebaseFirestore.getInstance().collection("items")
+                        .document(it).update("favorite", 1)
+                }
+
             } else {
                 FirebaseFirestore.getInstance().collection("users")
                     .document(uid!!)
                     .collection("watchItems")
                     .document(item.id)
                     .delete()
+                item.id?.let {
+                    FirebaseFirestore.getInstance().collection("items")
+                        .document(it).update("favorite", 0)
+                }
 
             }
 

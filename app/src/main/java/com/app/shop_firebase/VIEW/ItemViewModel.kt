@@ -25,4 +25,8 @@ private lateinit var itemRepository: ItemRepository
         itemRepository.setCategory(categoryId)
 
     }
+    fun setFavorite(){
+        itemRepository.setFavorite()
+
+    }
 }

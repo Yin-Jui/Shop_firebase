@@ -1,5 +1,6 @@
 package com.app.shop_firebase.VIEW
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.app.shop_firebase.MODULE.Item
 import com.google.firebase.firestore.*
@@ -57,5 +58,21 @@ class FirestoreQuery : LiveData<List<Item>>(), EventListener<QuerySnapshot> {
         }
         registration = query.addSnapshotListener(this)
         isRegistrated = true
+    }
+
+    fun setFavorite(){
+        if (isRegistrated) {
+            registration.remove()
+            isRegistrated = false
+        }
+        query = FirebaseFirestore.getInstance()
+                .collection("items")
+                .whereEqualTo("favorite",1)
+                .orderBy("viewCount", Query.Direction.DESCENDING)
+                .limit(10)
+
+        registration = query.addSnapshotListener(this)
+        isRegistrated = true
+
     }
 }
