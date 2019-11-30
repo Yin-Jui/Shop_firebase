@@ -33,6 +33,20 @@
 
 * Users can view their favorite by select the Favorites option of the menu item. 
 
+##  <span style="color:blue">**Resourse of product information**
+  
+https://www.macrumors.com/roundup/iphone-11-pro/
+
+https://www.wareable.com/apple/apple-watch-super-guide-the-missing-manual-001
+
+https://www.bestbuy.com/site/autel-robotics-evo-4k-drone-with-controller-orange/6238322.p?skuId=6238322
+
+https://www.bose.com/en_us/products/headphones/earphones/soundsport-in-ear-headphones-apple-devices.html#v=soundsport_ie_headphones_ii_apple_energy_green
+
+https://www.gsmarena.com/google_pixel_4-9896.php
+
+https://www.zara.com/ww/
+
   
   
 
